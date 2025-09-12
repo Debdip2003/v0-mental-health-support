@@ -1,15 +1,15 @@
 "use client"
 
 import { AppWrapper } from "@/components/app-wrapper"
-import { ResourceHub } from "@/components/resource-hub"
+import { PeerSupport } from "@/components/peer-support"
 
-export default function ResourcesPage() {
+export default function PeerSupportPage() {
   return (
     <AppWrapper>
      
 
       <main className="container mx-auto px-4 py-8">
-        <ResourceHub />
+        <PeerSupport />
       </main>
     </AppWrapper>
   )

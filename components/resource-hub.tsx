@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BookOpen, Play, Download, Search, Clock, Users, Star } from "lucide-react"
+import { BookOpen, Play, Download, Search, Clock, Users, Star, Video } from "lucide-react"
 
 interface Resource {
   id: string
@@ -22,6 +22,7 @@ interface Resource {
   tags: string[]
   content?: string
   audioUrl?: string
+  videoUrl?: string // Added video URL field
 }
 
 const resources: Resource[] = [
@@ -54,16 +55,16 @@ const resources: Resource[] = [
   },
   {
     id: "3",
-    title: "Manejo del Estrés Académico",
-    description: "Guía completa para manejar el estrés relacionado con los estudios universitarios.",
+    title: "মানসিক স্বাস্থ্য এবং চাপ ব্যবস্থাপনা",
+    description: "বিশ্ববিদ্যালয়ের ছাত্রছাত্রীদের জন্য মানসিক স্বাস্থ্য এবং চাপ নিয়ন্ত্রণের গাইড।",
     type: "guide",
     category: "Stress Management",
-    language: "Spanish",
+    language: "Bengali",
     duration: "12 min read",
     rating: 4.7,
     downloads: 634,
-    tags: ["estrés", "académico", "estudiantes"],
-    content: "Esta guía cubre técnicas efectivas para manejar el estrés académico...",
+    tags: ["চাপ", "মানসিক স্বাস্থ্য", "ছাত্র"],
+    content: "এই গাইডে মানসিক চাপ নিয়ন্ত্রণের কার্যকর কৌশল রয়েছে...",
   },
   {
     id: "4",
@@ -104,10 +105,49 @@ const resources: Resource[] = [
     tags: ["मानसिक स्वास्थ्य", "छात्र", "देखभाल"],
     content: "यह गाइड मानसिक स्वास्थ्य की बुनियादी बातों को कवर करता है...",
   },
+  {
+    id: "7",
+    title: "Coping with Academic Pressure",
+    description: "Video guide on managing academic stress and maintaining work-life balance.",
+    type: "video",
+    category: "Stress Management",
+    language: "English",
+    duration: "15 min",
+    rating: 4.9,
+    downloads: 1567,
+    tags: ["academic", "pressure", "balance"],
+    videoUrl: "/videos/academic-pressure.mp4",
+  },
+  {
+    id: "8",
+    title: "শিক্ষার্থীদের জন্য মানসিক স্বাস্থ্য",
+    description: "শিক্ষার্থীদের মানসিক স্বাস্থ্য রক্ষার উপায় নিয়ে ভিডিয়ো গাইড।",
+    type: "video",
+    category: "General Wellness",
+    language: "Bengali",
+    duration: "12 min",
+    rating: 4.6,
+    downloads: 789,
+    tags: ["মানসিক স্বাস্থ্য", "শিক্ষার্থী", "গাইড"],
+    videoUrl: "/videos/mental-health-bengali.mp4",
+  },
+  {
+    id: "9",
+    title: "तनाव प्रबंधন तकनीकें",
+    description: "तनाव को कम करने और मानसिक शांति पाने के लिए व्यावहारिक तकनीकों का वीडियो।",
+    type: "video",
+    category: "Stress Management",
+    language: "Hindi",
+    duration: "18 min",
+    rating: 4.7,
+    downloads: 1234,
+    tags: ["तनाव", "प्रबंधन", "तकनीक"],
+    videoUrl: "/videos/stress-management-hindi.mp4",
+  },
 ]
 
 const categories = ["All", "Anxiety", "Stress Management", "Wellness", "Mindfulness", "General Wellness"]
-const languages = ["All", "English", "Spanish", "Hindi"]
+const languages = ["All", "English", "Hindi", "Bengali"]
 
 export function ResourceHub() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -134,7 +174,7 @@ export function ResourceHub() {
       case "audio":
         return <Play className="h-4 w-4" />
       case "video":
-        return <Play className="h-4 w-4" />
+        return <Video className="h-4 w-4" /> // Added video icon
       default:
         return <BookOpen className="h-4 w-4" />
     }
@@ -149,7 +189,7 @@ export function ResourceHub() {
       case "audio":
         return "bg-purple-100 text-purple-800"
       case "video":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-800" // Added video color
       default:
         return "bg-gray-100 text-gray-800"
     }
@@ -196,6 +236,21 @@ export function ResourceHub() {
                   <Button size="sm" className="flex items-center gap-2">
                     <Play className="h-4 w-4" />
                     Play Audio
+                  </Button>
+                  <div className="flex-1 bg-muted h-2 rounded-full">
+                    <div className="bg-primary h-2 rounded-full w-0" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">0:00 / {selectedResource.duration}</span>
+                </div>
+              </div>
+            )}
+
+            {selectedResource.type === "video" && selectedResource.videoUrl && (
+              <div className="mb-6 p-4 bg-card rounded-lg border">
+                <div className="flex items-center gap-4">
+                  <Button size="sm" className="flex items-center gap-2">
+                    <Video className="h-4 w-4" />
+                    Watch Video
                   </Button>
                   <div className="flex-1 bg-muted h-2 rounded-full">
                     <div className="bg-primary h-2 rounded-full w-0" />
@@ -274,11 +329,12 @@ export function ResourceHub() {
 
       {/* Resource Categories */}
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
           <TabsTrigger value="all">All Resources</TabsTrigger>
           <TabsTrigger value="guides">Guides</TabsTrigger>
           <TabsTrigger value="audio">Audio</TabsTrigger>
           <TabsTrigger value="articles">Articles</TabsTrigger>
+          <TabsTrigger value="videos">Videos</TabsTrigger> {/* Added videos tab */}
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
@@ -329,7 +385,7 @@ export function ResourceHub() {
                   </div>
 
                   <Button onClick={() => setSelectedResource(resource)} className="w-full" size="sm">
-                    {resource.type === "audio" ? "Listen" : "Read"}
+                    {resource.type === "audio" ? "Listen" : resource.type === "video" ? "Watch" : "Read"}
                   </Button>
                 </CardContent>
               </Card>
@@ -417,6 +473,35 @@ export function ResourceHub() {
                     <p className="text-sm text-muted-foreground mb-4">{resource.description}</p>
                     <Button onClick={() => setSelectedResource(resource)} className="w-full" size="sm">
                       Read Article
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="videos">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredResources
+              .filter((r) => r.type === "video")
+              .map((resource) => (
+                <Card key={resource.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-start justify-between mb-2">
+                      <Badge className={getTypeColor(resource.type)}>
+                        {getTypeIcon(resource.type)}
+                        <span className="ml-1 capitalize">{resource.type}</span>
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {resource.language}
+                      </Badge>
+                    </div>
+                    <CardTitle className="font-serif text-lg leading-tight">{resource.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">{resource.description}</p>
+                    <Button onClick={() => setSelectedResource(resource)} className="w-full" size="sm">
+                      Watch Video
                     </Button>
                   </CardContent>
                 </Card>

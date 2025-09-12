@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import { Menu, MessageCircle, Calendar, BookOpen, BarChart3, Phone, Shield } from "lucide-react"
+import { Menu, MessageCircle, Calendar, BookOpen, Users, ClipboardList, Phone, Shield } from "lucide-react"
 
 const navigation = [
   {
@@ -28,10 +28,16 @@ const navigation = [
     description: "Guides and wellness content",
   },
   {
-    name: "Admin Dashboard",
-    href: "/admin",
-    icon: BarChart3,
-    description: "System analytics",
+    name: "Peer Support",
+    href: "/peer-support",
+    icon: Users,
+    description: "Connect with community",
+  },
+  {
+    name: "Assessment Tests",
+    href: "/assessments",
+    icon: ClipboardList,
+    description: "Mental health evaluations",
   },
 ]
 

@@ -3,13 +3,12 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
-import { CalendarIcon, Clock, User, Shield, CheckCircle } from "lucide-react"
+import { CalendarIcon, Clock, Shield, CheckCircle, Filter } from "lucide-react"
 import { format } from "date-fns"
 
 interface Counselor {
@@ -18,11 +17,21 @@ interface Counselor {
   specialties: string[]
   availability: string[]
   languages: string[]
+  institution: string // Added institution field
 }
 
 interface TimeSlot {
   time: string
   available: boolean
+}
+
+interface AppointmentBookingProps {
+  user: {
+    name: string
+    email: string
+    phone: string
+    institution: string
+  }
 }
 
 const counselors: Counselor[] = [
@@ -31,21 +40,40 @@ const counselors: Counselor[] = [
     name: "Dr. Sarah Chen",
     specialties: ["Anxiety", "Depression", "Academic Stress"],
     availability: ["Monday", "Wednesday", "Friday"],
-    languages: ["English", "Mandarin"],
+    languages: ["English", "Hindi"],
+    institution: "University of Delhi", // Added institution
   },
   {
     id: "2",
-    name: "Dr. Michael Rodriguez",
+    name: "Dr. Debdip Bhattacharya",
     specialties: ["Relationship Issues", "Self-Esteem", "Life Transitions"],
     availability: ["Tuesday", "Thursday", "Saturday"],
-    languages: ["English", "Spanish"],
+    languages: ["English", "Bengali"],
+    institution: "Jawaharlal Nehru University", // Added institution
   },
   {
     id: "3",
     name: "Dr. Priya Patel",
     specialties: ["Cultural Identity", "Family Conflicts", "Stress Management"],
     availability: ["Monday", "Tuesday", "Wednesday", "Thursday"],
-    languages: ["English", "Hindi", "Gujarati"],
+    languages: ["English", "Hindi", "Bengali"],
+    institution: "University of Delhi", // Added institution
+  },
+  {
+    id: "4",
+    name: "Dr. Rajesh Kumar",
+    specialties: ["Career Counseling", "Academic Pressure", "Social Anxiety"],
+    availability: ["Monday", "Wednesday", "Friday"],
+    languages: ["English", "Hindi", "Bengali"],
+    institution: "Indian Institute of Technology Delhi", // Added institution
+  },
+  {
+    id: "5",
+    name: "Dr. Fatima Sheikh",
+    specialties: ["Trauma", "PTSD", "Mindfulness"],
+    availability: ["Tuesday", "Thursday", "Saturday"],
+    languages: ["English", "Bengali", "Hindi"],
+    institution: "Jamia Millia Islamia", // Added institution
   },
 ]
 
@@ -59,20 +87,25 @@ const timeSlots: TimeSlot[] = [
   { time: "4:00 PM", available: true },
 ]
 
-export function AppointmentBooking() {
+export function AppointmentBooking({ user }: AppointmentBookingProps) {
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [selectedCounselor, setSelectedCounselor] = useState<string>("")
   const [selectedTime, setSelectedTime] = useState<string>("")
+  const [institutionFilter, setInstitutionFilter] = useState<string>("All") // Added institution filter
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
     reason: "",
     urgency: "",
     previousCounseling: "",
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [step, setStep] = useState(1)
+
+  const filteredCounselors =
+    institutionFilter === "All"
+      ? counselors
+      : counselors.filter((counselor) => counselor.institution === institutionFilter)
+
+  const institutions = ["All", ...Array.from(new Set(counselors.map((c) => c.institution)))]
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -84,7 +117,7 @@ export function AppointmentBooking() {
   }
 
   const canProceedToStep2 = selectedDate && selectedCounselor && selectedTime
-  const canSubmit = canProceedToStep2 && formData.name && formData.email && formData.reason
+  const canSubmit = canProceedToStep2 && formData.reason // Removed name and email validation since user is logged in
 
   if (isSubmitted) {
     return (
@@ -101,6 +134,9 @@ export function AppointmentBooking() {
             </p>
             <p>
               <strong>Counselor:</strong> {counselors.find((c) => c.id === selectedCounselor)?.name}
+            </p>
+            <p>
+              <strong>Institution:</strong> {counselors.find((c) => c.id === selectedCounselor)?.institution}
             </p>
           </div>
           <div className="bg-card p-4 rounded-lg border mb-6">
@@ -144,7 +180,7 @@ export function AppointmentBooking() {
           >
             2
           </div>
-          <span className="text-sm font-medium">Personal Information</span>
+          <span className="text-sm font-medium">Session Details</span>
         </div>
       </div>
 
@@ -174,12 +210,27 @@ export function AppointmentBooking() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
-                  <User className="h-5 w-5" />
+                  <Shield className="h-5 w-5" />
                   Choose Counselor
                 </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  <Select value={institutionFilter} onValueChange={setInstitutionFilter}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Filter by institution" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {institutions.map((institution) => (
+                        <SelectItem key={institution} value={institution}>
+                          {institution}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {counselors.map((counselor) => (
+                {filteredCounselors.map((counselor) => (
                   <div
                     key={counselor.id}
                     className={`p-4 rounded-lg border cursor-pointer transition-colors ${
@@ -189,21 +240,33 @@ export function AppointmentBooking() {
                     }`}
                     onClick={() => setSelectedCounselor(counselor.id)}
                   >
-                    <h4 className="font-medium mb-2">{counselor.name}</h4>
-                    <div className="space-y-2">
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Specialties:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {counselor.specialties.map((specialty) => (
-                            <Badge key={specialty} variant="secondary" className="text-xs">
-                              {specialty}
-                            </Badge>
-                          ))}
-                        </div>
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0">
+                        <img
+                          src={`/professional-counsellor-headshot-.jpg?key=vi4d6&height=80&width=80&query=professional counsellor headshot ${counselor.name}`}
+                          alt={`${counselor.name} profile`}
+                          className="w-20 h-20 rounded-full object-cover border-2 border-border"
+                        />
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Languages:</p>
-                        <p className="text-sm">{counselor.languages.join(", ")}</p>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium mb-2">{counselor.name}</h4>
+                        <p className="text-xs text-muted-foreground mb-2">{counselor.institution}</p>
+                        <div className="space-y-2">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Specialties:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {counselor.specialties.map((specialty) => (
+                                <Badge key={specialty} variant="secondary" className="text-xs">
+                                  {specialty}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Languages:</p>
+                            <p className="text-sm">{counselor.languages.join(", ")}</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -243,43 +306,12 @@ export function AppointmentBooking() {
       {step === 2 && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-serif">Personal Information</CardTitle>
-            <p className="text-sm text-muted-foreground">All information is kept strictly confidential and secure.</p>
+            <CardTitle className="font-serif">Session Details</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Booking for: {user.name} ({user.email}) - {user.institution}
+            </p>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Enter your full name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="your.email@university.edu"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number (Optional)</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                placeholder="(555) 123-4567"
-              />
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="urgency">How urgent is your need for support?</Label>
               <Select value={formData.urgency} onValueChange={(value) => handleInputChange("urgency", value)}>
@@ -348,7 +380,7 @@ export function AppointmentBooking() {
         <div className="flex gap-2">
           {step === 1 && (
             <Button onClick={() => setStep(2)} disabled={!canProceedToStep2}>
-              Continue to Personal Info
+              Continue to Session Details
             </Button>
           )}
           {step === 2 && (
