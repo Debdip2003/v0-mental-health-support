@@ -10,6 +10,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, Clock, Shield, CheckCircle, Filter } from "lucide-react"
 import { format } from "date-fns"
+import { freemem } from "os"
+import { fr } from "date-fns/locale"
 
 interface Counselor {
   id: string
@@ -18,6 +20,7 @@ interface Counselor {
   availability: string[]
   languages: string[]
   institution: string // Added institution field
+  free: boolean
 }
 
 interface TimeSlot {
@@ -37,11 +40,12 @@ interface AppointmentBookingProps {
 const counselors: Counselor[] = [
   {
     id: "1",
-    name: "Dr. Sarah Patel",
+    name: "Dr. Debangshi Roy",
     specialties: ["Anxiety", "Depression", "Academic Stress"],
     availability: ["Monday", "Wednesday", "Friday"],
     languages: ["English", "Hindi"],
     institution: "Meghnad Saha Institute of Technology", // Added institution
+    free: true,
   },
   {
     id: "2",
@@ -50,30 +54,34 @@ const counselors: Counselor[] = [
     availability: ["Tuesday", "Thursday", "Saturday"],
     languages: ["English", "Bengali"],
     institution: "Meghnad Saha Institute of Technology", // Added institution
+    free: true,
   },
   {
     id: "3",
-    name: "Dr. Priya Patel",
+    name: "Dr. Soumalya Bakshi",
     specialties: ["Cultural Identity", "Family Conflicts", "Stress Management"],
     availability: ["Monday", "Tuesday", "Wednesday", "Thursday"],
     languages: ["English", "Hindi", "Bengali"],
     institution: "Meghnad Saha Institute of Technology", // Added institution
+    free: true,
   },
   {
     id: "4",
-    name: "Dr. Rajesh Kumar",
+    name: "Dr. Ayush Saha Roy",
     specialties: ["Career Counseling", "Academic Pressure", "Social Anxiety"],
     availability: ["Monday", "Wednesday", "Friday"],
     languages: ["English", "Hindi", "Bengali"],
     institution: "Netaji Subhash Institute of Technology", // Added institution
+    free: false,
   },
   {
     id: "5",
-    name: "Dr. Fatima Sheikh",
+    name: "Dr. Sahil Kumar Singh",
     specialties: ["Trauma", "PTSD", "Mindfulness"],
     availability: ["Tuesday", "Thursday", "Saturday"],
     languages: ["English", "Bengali", "Hindi"],
     institution: "Netaji Subhash Institute of Technology", // Added institution
+    free: false,
   },
 ]
 
@@ -249,7 +257,12 @@ export function AppointmentBooking({ user }: AppointmentBookingProps) {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
                         <h4 className="font-medium mb-2">{counselor.name}</h4>
+                        <p className={`font-medium mb-2 ${
+                          counselor.free ? "text-green-600" : "text-blue-600" 
+                        }`}>{counselor.free?"Free":"Paid"}</p>
+                        </div>
                         <p className="text-xs text-muted-foreground mb-2">{counselor.institution}</p>
                         <div className="space-y-2">
                           <div>
