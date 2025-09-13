@@ -37,11 +37,11 @@ interface AppointmentBookingProps {
 const counselors: Counselor[] = [
   {
     id: "1",
-    name: "Dr. Sarah Chen",
+    name: "Dr. Sarah Patel",
     specialties: ["Anxiety", "Depression", "Academic Stress"],
     availability: ["Monday", "Wednesday", "Friday"],
     languages: ["English", "Hindi"],
-    institution: "University of Delhi", // Added institution
+    institution: "Meghnad Saha Institute of Technology", // Added institution
   },
   {
     id: "2",
@@ -49,7 +49,7 @@ const counselors: Counselor[] = [
     specialties: ["Relationship Issues", "Self-Esteem", "Life Transitions"],
     availability: ["Tuesday", "Thursday", "Saturday"],
     languages: ["English", "Bengali"],
-    institution: "Jawaharlal Nehru University", // Added institution
+    institution: "Meghnad Saha Institute of Technology", // Added institution
   },
   {
     id: "3",
@@ -57,7 +57,7 @@ const counselors: Counselor[] = [
     specialties: ["Cultural Identity", "Family Conflicts", "Stress Management"],
     availability: ["Monday", "Tuesday", "Wednesday", "Thursday"],
     languages: ["English", "Hindi", "Bengali"],
-    institution: "University of Delhi", // Added institution
+    institution: "Meghnad Saha Institute of Technology", // Added institution
   },
   {
     id: "4",
@@ -65,7 +65,7 @@ const counselors: Counselor[] = [
     specialties: ["Career Counseling", "Academic Pressure", "Social Anxiety"],
     availability: ["Monday", "Wednesday", "Friday"],
     languages: ["English", "Hindi", "Bengali"],
-    institution: "Indian Institute of Technology Delhi", // Added institution
+    institution: "Netaji Subhash Institute of Technology", // Added institution
   },
   {
     id: "5",
@@ -73,7 +73,7 @@ const counselors: Counselor[] = [
     specialties: ["Trauma", "PTSD", "Mindfulness"],
     availability: ["Tuesday", "Thursday", "Saturday"],
     languages: ["English", "Bengali", "Hindi"],
-    institution: "Jamia Millia Islamia", // Added institution
+    institution: "Netaji Subhash Institute of Technology", // Added institution
   },
 ]
 

@@ -31,6 +31,7 @@ const institutions = [
   "Ambedkar University Delhi",
   "Delhi Technological University",
   "Netaji Subhas University of Technology",
+  "Meghnad Saha Institute of Technology",
   "Other",
 ]
 
@@ -54,7 +55,7 @@ export function AuthSystem({ onLogin }: AuthSystemProps) {
     e.preventDefault()
     // In a real app, this would authenticate with an API
     const user: User = {
-      name: "John Doe", // This would come from the API
+      name: "JD", // This would come from the API
       email: loginData.email,
       phone: "+91 9876543210", // This would come from the API
       institution: "University of Delhi", // This would come from the API
@@ -163,12 +164,12 @@ export function AuthSystem({ onLogin }: AuthSystemProps) {
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name *</Label>
+                  <Label htmlFor="signup-name">Username *</Label>
                   <Input
                     id="signup-name"
                     value={signupData.name}
                     onChange={(e) => setSignupData((prev) => ({ ...prev, name: e.target.value }))}
-                    placeholder="Enter your full name"
+                    placeholder="Enter your user name"
                     required
                   />
                 </div>

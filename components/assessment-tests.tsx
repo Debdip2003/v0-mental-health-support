@@ -76,11 +76,11 @@ export function AssessmentTests() {
   const getTestData = () => {
     switch (selectedTest) {
       case "phq9":
-        return { questions: PHQ9_QUESTIONS, options: RESPONSE_OPTIONS, title: "PHQ-9 Depression Assessment" }
+        return { questions: PHQ9_QUESTIONS, options: RESPONSE_OPTIONS, title: " Depression Assessment" }
       case "gad7":
-        return { questions: GAD7_QUESTIONS, options: GAD_OPTIONS, title: "GAD-7 Anxiety Assessment" }
+        return { questions: GAD7_QUESTIONS, options: GAD_OPTIONS, title: "Anxiety Assessment" }
       case "ghq":
-        return { questions: GHQ_QUESTIONS, options: GHQ_OPTIONS, title: "GHQ General Health Assessment" }
+        return { questions: GHQ_QUESTIONS, options: GHQ_OPTIONS, title: "General Health Assessment" }
       default:
         return { questions: [], options: [], title: "" }
     }
@@ -164,7 +164,7 @@ export function AssessmentTests() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-slate-600 mb-4">
-                Patient Health Questionnaire-9 is a validated tool for screening and measuring depression severity.
+                This is a validated tool for screening and measuring depression severity.
               </p>
               <Button className="w-full bg-amber-600 hover:bg-amber-700">Start Assessment</Button>
             </CardContent>
@@ -180,7 +180,7 @@ export function AssessmentTests() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-slate-600 mb-4">
-                Generalized Anxiety Disorder-7 is a reliable tool for screening and measuring anxiety symptoms.
+                This is a reliable tool for screening and measuring anxiety symptoms.
               </p>
               <Button className="w-full bg-blue-600 hover:bg-blue-700">Start Assessment</Button>
             </CardContent>
@@ -196,7 +196,7 @@ export function AssessmentTests() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-slate-600 mb-4">
-                General Health Questionnaire assesses overall psychological well-being and mental health.
+                It assesses overall psychological well-being and mental health.
               </p>
               <Button className="w-full bg-emerald-600 hover:bg-emerald-700">Start Assessment</Button>
             </CardContent>

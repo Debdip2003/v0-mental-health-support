@@ -46,7 +46,7 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <nav className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <nav className="border-b bg-card backdrop-blur-sm sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -54,7 +54,7 @@ export function Navigation() {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <MessageCircle className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="font-serif font-bold text-xl">MindCare</span>
+            <span className="font-serif font-bold text-xl text-foreground">MindCare</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -68,7 +68,7 @@ export function Navigation() {
                   className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive
                       ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      : "text-foreground hover:text-primary hover:bg-muted"
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
@@ -82,7 +82,7 @@ export function Navigation() {
           <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm">
               <Phone className="h-4 w-4 text-destructive" />
-              <span className="text-muted-foreground">Crisis:</span>
+              <span className="text-foreground">Crisis:</span>
               <Badge variant="destructive" className="font-mono">
                 988
               </Badge>
@@ -102,7 +102,7 @@ export function Navigation() {
                   <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                     <MessageCircle className="h-4 w-4 text-primary-foreground" />
                   </div>
-                  <span className="font-serif font-bold text-xl">MindCare</span>
+                  <span className="font-serif font-bold text-xl text-foreground">MindCare</span>
                 </div>
 
                 <div className="space-y-2">
