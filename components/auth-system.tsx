@@ -15,15 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Eye, EyeOff, Shield, CheckCircle, User } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Eye, EyeOff, Shield, CheckCircle } from "lucide-react";
+import { generateUserId } from "@/lib/utils";
 
 interface User {
+  userId: string;
   name: string;
   email: string;
   phone: string;
@@ -50,9 +46,6 @@ const institutions = [
 export function AuthSystem({ onLogin }: AuthSystemProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showUsernameModal, setShowUsernameModal] = useState(false);
-  const [username, setUsername] = useState("");
-  const [tempUserData, setTempUserData] = useState<User | null>(null);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -69,7 +62,8 @@ export function AuthSystem({ onLogin }: AuthSystemProps) {
     e.preventDefault();
     // In a real app, this would authenticate with an API
     const user: User = {
-      name: "JD", // This would come from the API
+      userId: generateUserId(),
+      name: "", // Username removed, use userId instead
       email: loginData.email,
       phone: "+91 9876543210", // This would come from the API
       institution: "University of Delhi", // This would come from the API
@@ -83,36 +77,20 @@ export function AuthSystem({ onLogin }: AuthSystemProps) {
       alert("Passwords don't match");
       return;
     }
-    // Store temporary user data and show username modal
     const userData: User = {
-      name: "", // Will be set after username entry
+      userId: generateUserId(),
+      name: "", // Username removed, use userId instead
       email: signupData.email,
       phone: signupData.phone,
       institution: signupData.institution,
     };
-    setTempUserData(userData);
     setIsSubmitted(true);
     setTimeout(() => {
-      setShowUsernameModal(true);
-    }, 2000);
+      onLogin(userData);
+    }, 1500);
   };
 
-  const handleUsernameSubmit = () => {
-    if (!username.trim()) {
-      alert("Please enter a username");
-      return;
-    }
-    if (tempUserData) {
-      const finalUser: User = {
-        ...tempUserData,
-        name: username.trim(),
-      };
-      setShowUsernameModal(false);
-      onLogin(finalUser);
-    }
-  };
-
-  if (isSubmitted && !showUsernameModal) {
+  if (isSubmitted) {
     return (
       <Card className="max-w-md mx-auto">
         <CardContent className="p-8 text-center">
@@ -343,53 +321,7 @@ export function AuthSystem({ onLogin }: AuthSystemProps) {
         </Card>
       </div>
 
-      {/* Username Entry Modal */}
-      <Dialog open={showUsernameModal} onOpenChange={setShowUsernameModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center font-serif">
-              Choose Your Username
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="text-center">
-              <User className="h-12 w-12 text-primary mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">
-                Your account has been created! Now choose a username that will
-                be displayed on the platform.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="username">Username *</Label>
-              <Input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
-                required
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleUsernameSubmit();
-                  }
-                }}
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowUsernameModal(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleUsernameSubmit} className="flex-1">
-                Continue
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Username modal removed; userId is generated automatically */}
     </>
   );
 }

@@ -37,6 +37,7 @@ interface TimeSlot {
 
 interface AppointmentBookingProps {
   user: {
+    userId: string;
     name: string;
     email: string;
     phone: string;
@@ -958,7 +959,7 @@ export function AppointmentBooking({ user }: AppointmentBookingProps) {
           <CardHeader>
             <CardTitle className="font-serif">Session Details</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Booking for: {user.name} ({user.email}) - {user.institution}
+              Booking for: {user.userId} ({user.email}) - {user.institution}
             </p>
           </CardHeader>
           <CardContent className="space-y-6">

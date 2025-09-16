@@ -4,6 +4,7 @@ import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 
 interface User {
+  userId: string;
   name: string;
   email: string;
   phone: string;
@@ -35,7 +36,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (savedUser) {
         try {
           const parsedUser = JSON.parse(savedUser);
-          setUser(parsedUser);
+          // Migrate old users missing userId
+          if (parsedUser && !parsedUser.userId) {
+            const { generateUserId } = require("@/lib/utils");
+            const migrated = { ...parsedUser, userId: generateUserId() };
+            setUser(migrated);
+            localStorage.setItem("mindcare-user", JSON.stringify(migrated));
+          } else {
+            setUser(parsedUser);
+          }
         } catch (error) {
           console.error("Error parsing saved user:", error);
           localStorage.removeItem("mindcare-user");

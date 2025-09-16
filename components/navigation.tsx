@@ -102,7 +102,7 @@ export function Navigation() {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-foreground">
-                  {user?.name}
+                  {user?.userId}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   {user?.institution}
@@ -195,7 +195,7 @@ export function Navigation() {
                       <User className="h-5 w-5 text-primary-foreground" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-sm">{user?.name}</div>
+                      <div className="font-medium text-sm">{user?.userId}</div>
                       <div className="text-xs text-muted-foreground">
                         {user?.institution}
                       </div>
