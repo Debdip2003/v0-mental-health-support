@@ -400,80 +400,91 @@ export function ResourceHub() {
             {filteredResources.map((resource) => (
               <Card
                 key={resource.id}
-                className="group relative overflow-hidden border-0 bg-gradient-to-br from-white to-gray-50/50 hover:from-white hover:to-gray-100/50 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1"
+                className="group relative overflow-hidden border-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl hover:from-white/90 hover:via-white/70 hover:to-white/50 transition-all duration-500 cursor-pointer hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:-translate-y-3 hover:scale-[1.02] rounded-2xl before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500"
+                style={{
+                  background: `linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 100%)`,
+                  backdropFilter: "blur(20px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                }}
               >
-                {/* Type indicator */}
-                <div className="absolute top-4 right-4 z-10">
+                {/* Animated background gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                {/* Type indicator with glow effect */}
+                <div className="absolute top-6 right-6 z-10">
                   <div
-                    className={`w-3 h-3 rounded-full ${
+                    className={`w-4 h-4 rounded-full shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl ${
                       resource.type === "guide"
-                        ? "bg-blue-500"
+                        ? "bg-gradient-to-r from-blue-400 to-blue-600 shadow-blue-500/50"
                         : resource.type === "audio"
-                        ? "bg-green-500"
+                        ? "bg-gradient-to-r from-green-400 to-green-600 shadow-green-500/50"
                         : resource.type === "video"
-                        ? "bg-purple-500"
-                        : "bg-orange-500"
+                        ? "bg-gradient-to-r from-purple-400 to-purple-600 shadow-purple-500/50"
+                        : "bg-gradient-to-r from-orange-400 to-orange-600 shadow-orange-500/50"
                     }`}
                   />
                 </div>
 
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-2 mb-3">
+                <CardHeader className="pb-4 px-8 pt-8 relative z-10">
+                  <div className="flex items-center gap-3 mb-5">
                     <Badge
                       variant="outline"
-                      className={`text-xs font-medium border-0 px-3 py-1 ${
+                      className={`text-xs font-bold border-0 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 group-hover:scale-105 ${
                         resource.type === "guide"
-                          ? "bg-blue-50 text-blue-700"
+                          ? "bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-800 border-blue-300/30"
                           : resource.type === "audio"
-                          ? "bg-green-50 text-green-700"
+                          ? "bg-gradient-to-r from-green-500/20 to-green-600/20 text-green-800 border-green-300/30"
                           : resource.type === "video"
-                          ? "bg-purple-50 text-purple-700"
-                          : "bg-orange-50 text-orange-700"
+                          ? "bg-gradient-to-r from-purple-500/20 to-purple-600/20 text-purple-800 border-purple-300/30"
+                          : "bg-gradient-to-r from-orange-500/20 to-orange-600/20 text-orange-800 border-orange-300/30"
                       }`}
                     >
                       {getTypeIcon(resource.type)}
-                      <span className="ml-1.5 capitalize">{resource.type}</span>
+                      <span className="ml-2 capitalize">{resource.type}</span>
                     </Badge>
                     <Badge
                       variant="outline"
-                      className="text-xs font-normal text-gray-500 border-gray-200"
+                      className="text-xs font-semibold text-gray-700 border-gray-300/40 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm"
                     >
                       {resource.language}
                     </Badge>
                   </div>
-                  <CardTitle className="font-serif text-xl leading-tight text-gray-900 group-hover:text-gray-700 transition-colors">
+                  <CardTitle className="font-serif text-2xl leading-tight text-gray-900 group-hover:text-gray-800 transition-colors line-clamp-2 mb-2">
                     {resource.title}
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className="pt-0">
-                  <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3">
+                <CardContent className="pt-0 px-8 pb-8 relative z-10">
+                  <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3 group-hover:text-gray-700 transition-colors">
                     {resource.description}
                   </p>
 
-                  {/* Stats */}
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-6">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span className="font-medium">{resource.duration}</span>
+                  {/* Enhanced Stats with glassmorphism */}
+                  <div className="flex items-center justify-between text-xs text-gray-600 mb-6 p-3 rounded-xl bg-white/40 backdrop-blur-sm border border-white/20">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-gray-500" />
+                      <span className="font-semibold">{resource.duration}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Star className="h-3.5 w-3.5 fill-current text-amber-400" />
-                      <span className="font-medium">{resource.rating}</span>
+                    <div className="flex items-center gap-2">
+                      <Star className="h-4 w-4 fill-current text-amber-400" />
+                      <span className="font-semibold">{resource.rating}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5" />
-                      <span className="font-medium">{resource.downloads}</span>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-gray-500" />
+                      <span className="font-semibold">
+                        {resource.downloads}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-6">
+                  {/* Enhanced Tags with glassmorphism */}
+                  <div className="flex flex-wrap gap-2 mb-6">
                     {resource.tags.slice(0, 2).map((tag) => (
                       <Badge
                         key={tag}
                         variant="secondary"
-                        className="text-xs font-normal bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                        className="text-xs font-medium bg-white/60 text-gray-700 hover:bg-white/80 transition-all duration-300 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/30 hover:scale-105"
                       >
                         {tag}
                       </Badge>
@@ -481,32 +492,32 @@ export function ResourceHub() {
                     {resource.tags.length > 2 && (
                       <Badge
                         variant="secondary"
-                        className="text-xs font-normal bg-gray-100 text-gray-500"
+                        className="text-xs font-medium bg-white/40 text-gray-600 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/20"
                       >
                         +{resource.tags.length - 2}
                       </Badge>
                     )}
                   </div>
 
-                  {/* Action Button */}
+                  {/* Enhanced Action Button with gradient and glow */}
                   <Button
                     onClick={() => setSelectedResource(resource)}
-                    className={`w-full font-medium transition-all duration-200 ${
+                    className={`w-full font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-xl py-3 ${
                       resource.type === "guide"
-                        ? "bg-blue-600 hover:bg-blue-700"
+                        ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-blue-500/25"
                         : resource.type === "audio"
-                        ? "bg-green-600 hover:bg-green-700"
+                        ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-green-500/25"
                         : resource.type === "video"
-                        ? "bg-purple-600 hover:bg-purple-700"
-                        : "bg-orange-600 hover:bg-orange-700"
+                        ? "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-purple-500/25"
+                        : "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-orange-500/25"
                     }`}
                     size="sm"
                   >
                     {resource.type === "audio"
-                      ? "Listen"
+                      ? "🎵 Listen"
                       : resource.type === "video"
-                      ? "Watch"
-                      : "Read"}
+                      ? "▶️ Watch"
+                      : "📖 Read"}
                   </Button>
                 </CardContent>
               </Card>
@@ -521,63 +532,71 @@ export function ResourceHub() {
               .map((resource) => (
                 <Card
                   key={resource.id}
-                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white to-gray-50/50 hover:from-white hover:to-gray-100/50 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1"
+                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl hover:from-white/90 hover:via-white/70 hover:to-white/50 transition-all duration-500 cursor-pointer hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:-translate-y-3 hover:scale-[1.02] rounded-2xl before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 100%)`,
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                  }}
                 >
-                  <div className="absolute top-4 right-4 z-10">
-                    <div className="w-3 h-3 rounded-full bg-blue-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="absolute top-6 right-6 z-10">
+                    <div className="w-4 h-4 rounded-full shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl bg-gradient-to-r from-blue-400 to-blue-600 shadow-blue-500/50" />
                   </div>
 
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2 mb-3">
+                  <CardHeader className="pb-4 px-8 pt-8 relative z-10">
+                    <div className="flex items-center gap-3 mb-5">
                       <Badge
                         variant="outline"
-                        className="text-xs font-medium border-0 px-3 py-1 bg-blue-50 text-blue-700"
+                        className="text-xs font-bold border-0 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 group-hover:scale-105 bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-800 border-blue-300/30"
                       >
                         {getTypeIcon(resource.type)}
-                        <span className="ml-1.5 capitalize">
-                          {resource.type}
-                        </span>
+                        <span className="ml-2 capitalize">{resource.type}</span>
                       </Badge>
                       <Badge
                         variant="outline"
-                        className="text-xs font-normal text-gray-500 border-gray-200"
+                        className="text-xs font-semibold text-gray-700 border-gray-300/40 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm"
                       >
                         {resource.language}
                       </Badge>
                     </div>
-                    <CardTitle className="font-serif text-xl leading-tight text-gray-900 group-hover:text-gray-700 transition-colors">
+                    <CardTitle className="font-serif text-2xl leading-tight text-gray-900 group-hover:text-gray-800 transition-colors line-clamp-2 mb-2">
                       {resource.title}
                     </CardTitle>
                   </CardHeader>
 
-                  <CardContent className="pt-0">
-                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3">
+                  <CardContent className="pt-0 px-8 pb-8 relative z-10">
+                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3 group-hover:text-gray-700 transition-colors">
                       {resource.description}
                     </p>
 
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-6">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span className="font-medium">{resource.duration}</span>
+                    <div className="flex items-center justify-between text-xs text-gray-600 mb-6 p-3 rounded-xl bg-white/40 backdrop-blur-sm border border-white/20">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
+                          {resource.duration}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Star className="h-3.5 w-3.5 fill-current text-amber-400" />
-                        <span className="font-medium">{resource.rating}</span>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 fill-current text-amber-400" />
+                        <span className="font-semibold">{resource.rating}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5" />
-                        <span className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
                           {resource.downloads}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6">
                       {resource.tags.slice(0, 2).map((tag) => (
                         <Badge
                           key={tag}
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                          className="text-xs font-medium bg-white/60 text-gray-700 hover:bg-white/80 transition-all duration-300 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/30 hover:scale-105"
                         >
                           {tag}
                         </Badge>
@@ -585,7 +604,7 @@ export function ResourceHub() {
                       {resource.tags.length > 2 && (
                         <Badge
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-500"
+                          className="text-xs font-medium bg-white/40 text-gray-600 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/20"
                         >
                           +{resource.tags.length - 2}
                         </Badge>
@@ -594,10 +613,10 @@ export function ResourceHub() {
 
                     <Button
                       onClick={() => setSelectedResource(resource)}
-                      className="w-full font-medium bg-blue-600 hover:bg-blue-700 transition-all duration-200"
+                      className="w-full font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-xl py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-blue-500/25"
                       size="sm"
                     >
-                      Read Guide
+                      📖 Read Guide
                     </Button>
                   </CardContent>
                 </Card>
@@ -612,63 +631,71 @@ export function ResourceHub() {
               .map((resource) => (
                 <Card
                   key={resource.id}
-                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white to-gray-50/50 hover:from-white hover:to-gray-100/50 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1"
+                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl hover:from-white/90 hover:via-white/70 hover:to-white/50 transition-all duration-500 cursor-pointer hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:-translate-y-3 hover:scale-[1.02] rounded-2xl before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 100%)`,
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                  }}
                 >
-                  <div className="absolute top-4 right-4 z-10">
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="absolute top-6 right-6 z-10">
+                    <div className="w-4 h-4 rounded-full shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl bg-gradient-to-r from-green-400 to-green-600 shadow-green-500/50" />
                   </div>
 
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2 mb-3">
+                  <CardHeader className="pb-4 px-8 pt-8 relative z-10">
+                    <div className="flex items-center gap-3 mb-5">
                       <Badge
                         variant="outline"
-                        className="text-xs font-medium border-0 px-3 py-1 bg-green-50 text-green-700"
+                        className="text-xs font-bold border-0 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 group-hover:scale-105 bg-gradient-to-r from-green-500/20 to-green-600/20 text-green-800 border-green-300/30"
                       >
                         {getTypeIcon(resource.type)}
-                        <span className="ml-1.5 capitalize">
-                          {resource.type}
-                        </span>
+                        <span className="ml-2 capitalize">{resource.type}</span>
                       </Badge>
                       <Badge
                         variant="outline"
-                        className="text-xs font-normal text-gray-500 border-gray-200"
+                        className="text-xs font-semibold text-gray-700 border-gray-300/40 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm"
                       >
                         {resource.language}
                       </Badge>
                     </div>
-                    <CardTitle className="font-serif text-xl leading-tight text-gray-900 group-hover:text-gray-700 transition-colors">
+                    <CardTitle className="font-serif text-2xl leading-tight text-gray-900 group-hover:text-gray-800 transition-colors line-clamp-2 mb-2">
                       {resource.title}
                     </CardTitle>
                   </CardHeader>
 
-                  <CardContent className="pt-0">
-                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3">
+                  <CardContent className="pt-0 px-8 pb-8 relative z-10">
+                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3 group-hover:text-gray-700 transition-colors">
                       {resource.description}
                     </p>
 
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-6">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span className="font-medium">{resource.duration}</span>
+                    <div className="flex items-center justify-between text-xs text-gray-600 mb-6 p-3 rounded-xl bg-white/40 backdrop-blur-sm border border-white/20">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
+                          {resource.duration}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Star className="h-3.5 w-3.5 fill-current text-amber-400" />
-                        <span className="font-medium">{resource.rating}</span>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 fill-current text-amber-400" />
+                        <span className="font-semibold">{resource.rating}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5" />
-                        <span className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
                           {resource.downloads}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6">
                       {resource.tags.slice(0, 2).map((tag) => (
                         <Badge
                           key={tag}
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                          className="text-xs font-medium bg-white/60 text-gray-700 hover:bg-white/80 transition-all duration-300 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/30 hover:scale-105"
                         >
                           {tag}
                         </Badge>
@@ -676,7 +703,7 @@ export function ResourceHub() {
                       {resource.tags.length > 2 && (
                         <Badge
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-500"
+                          className="text-xs font-medium bg-white/40 text-gray-600 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/20"
                         >
                           +{resource.tags.length - 2}
                         </Badge>
@@ -685,10 +712,10 @@ export function ResourceHub() {
 
                     <Button
                       onClick={() => setSelectedResource(resource)}
-                      className="w-full font-medium bg-green-600 hover:bg-green-700 transition-all duration-200"
+                      className="w-full font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-xl py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-green-500/25"
                       size="sm"
                     >
-                      Listen
+                      🎵 Listen
                     </Button>
                   </CardContent>
                 </Card>
@@ -703,63 +730,71 @@ export function ResourceHub() {
               .map((resource) => (
                 <Card
                   key={resource.id}
-                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white to-gray-50/50 hover:from-white hover:to-gray-100/50 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1"
+                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl hover:from-white/90 hover:via-white/70 hover:to-white/50 transition-all duration-500 cursor-pointer hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:-translate-y-3 hover:scale-[1.02] rounded-2xl before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 100%)`,
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                  }}
                 >
-                  <div className="absolute top-4 right-4 z-10">
-                    <div className="w-3 h-3 rounded-full bg-orange-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-amber-500/5 to-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="absolute top-6 right-6 z-10">
+                    <div className="w-4 h-4 rounded-full shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl bg-gradient-to-r from-orange-400 to-orange-600 shadow-orange-500/50" />
                   </div>
 
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2 mb-3">
+                  <CardHeader className="pb-4 px-8 pt-8 relative z-10">
+                    <div className="flex items-center gap-3 mb-5">
                       <Badge
                         variant="outline"
-                        className="text-xs font-medium border-0 px-3 py-1 bg-orange-50 text-orange-700"
+                        className="text-xs font-bold border-0 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 group-hover:scale-105 bg-gradient-to-r from-orange-500/20 to-orange-600/20 text-orange-800 border-orange-300/30"
                       >
                         {getTypeIcon(resource.type)}
-                        <span className="ml-1.5 capitalize">
-                          {resource.type}
-                        </span>
+                        <span className="ml-2 capitalize">{resource.type}</span>
                       </Badge>
                       <Badge
                         variant="outline"
-                        className="text-xs font-normal text-gray-500 border-gray-200"
+                        className="text-xs font-semibold text-gray-700 border-gray-300/40 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm"
                       >
                         {resource.language}
                       </Badge>
                     </div>
-                    <CardTitle className="font-serif text-xl leading-tight text-gray-900 group-hover:text-gray-700 transition-colors">
+                    <CardTitle className="font-serif text-2xl leading-tight text-gray-900 group-hover:text-gray-800 transition-colors line-clamp-2 mb-2">
                       {resource.title}
                     </CardTitle>
                   </CardHeader>
 
-                  <CardContent className="pt-0">
-                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3">
+                  <CardContent className="pt-0 px-8 pb-8 relative z-10">
+                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3 group-hover:text-gray-700 transition-colors">
                       {resource.description}
                     </p>
 
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-6">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span className="font-medium">{resource.duration}</span>
+                    <div className="flex items-center justify-between text-xs text-gray-600 mb-6 p-3 rounded-xl bg-white/40 backdrop-blur-sm border border-white/20">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
+                          {resource.duration}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Star className="h-3.5 w-3.5 fill-current text-amber-400" />
-                        <span className="font-medium">{resource.rating}</span>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 fill-current text-amber-400" />
+                        <span className="font-semibold">{resource.rating}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5" />
-                        <span className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
                           {resource.downloads}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6">
                       {resource.tags.slice(0, 2).map((tag) => (
                         <Badge
                           key={tag}
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                          className="text-xs font-medium bg-white/60 text-gray-700 hover:bg-white/80 transition-all duration-300 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/30 hover:scale-105"
                         >
                           {tag}
                         </Badge>
@@ -767,7 +802,7 @@ export function ResourceHub() {
                       {resource.tags.length > 2 && (
                         <Badge
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-500"
+                          className="text-xs font-medium bg-white/40 text-gray-600 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/20"
                         >
                           +{resource.tags.length - 2}
                         </Badge>
@@ -776,10 +811,10 @@ export function ResourceHub() {
 
                     <Button
                       onClick={() => setSelectedResource(resource)}
-                      className="w-full font-medium bg-orange-600 hover:bg-orange-700 transition-all duration-200"
+                      className="w-full font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-xl py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-orange-500/25"
                       size="sm"
                     >
-                      Read Article
+                      📄 Read Article
                     </Button>
                   </CardContent>
                 </Card>
@@ -794,63 +829,71 @@ export function ResourceHub() {
               .map((resource) => (
                 <Card
                   key={resource.id}
-                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white to-gray-50/50 hover:from-white hover:to-gray-100/50 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1"
+                  className="group relative overflow-hidden border-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-xl hover:from-white/90 hover:via-white/70 hover:to-white/50 transition-all duration-500 cursor-pointer hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:-translate-y-3 hover:scale-[1.02] rounded-2xl before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 100%)`,
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                  }}
                 >
-                  <div className="absolute top-4 right-4 z-10">
-                    <div className="w-3 h-3 rounded-full bg-purple-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-violet-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="absolute top-6 right-6 z-10">
+                    <div className="w-4 h-4 rounded-full shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl bg-gradient-to-r from-purple-400 to-purple-600 shadow-purple-500/50" />
                   </div>
 
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2 mb-3">
+                  <CardHeader className="pb-4 px-8 pt-8 relative z-10">
+                    <div className="flex items-center gap-3 mb-5">
                       <Badge
                         variant="outline"
-                        className="text-xs font-medium border-0 px-3 py-1 bg-purple-50 text-purple-700"
+                        className="text-xs font-bold border-0 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 group-hover:scale-105 bg-gradient-to-r from-purple-500/20 to-purple-600/20 text-purple-800 border-purple-300/30"
                       >
                         {getTypeIcon(resource.type)}
-                        <span className="ml-1.5 capitalize">
-                          {resource.type}
-                        </span>
+                        <span className="ml-2 capitalize">{resource.type}</span>
                       </Badge>
                       <Badge
                         variant="outline"
-                        className="text-xs font-normal text-gray-500 border-gray-200"
+                        className="text-xs font-semibold text-gray-700 border-gray-300/40 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm"
                       >
                         {resource.language}
                       </Badge>
                     </div>
-                    <CardTitle className="font-serif text-xl leading-tight text-gray-900 group-hover:text-gray-700 transition-colors">
+                    <CardTitle className="font-serif text-2xl leading-tight text-gray-900 group-hover:text-gray-800 transition-colors line-clamp-2 mb-2">
                       {resource.title}
                     </CardTitle>
                   </CardHeader>
 
-                  <CardContent className="pt-0">
-                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3">
+                  <CardContent className="pt-0 px-8 pb-8 relative z-10">
+                    <p className="text-sm text-gray-600 leading-relaxed mb-6 line-clamp-3 group-hover:text-gray-700 transition-colors">
                       {resource.description}
                     </p>
 
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-6">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span className="font-medium">{resource.duration}</span>
+                    <div className="flex items-center justify-between text-xs text-gray-600 mb-6 p-3 rounded-xl bg-white/40 backdrop-blur-sm border border-white/20">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
+                          {resource.duration}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Star className="h-3.5 w-3.5 fill-current text-amber-400" />
-                        <span className="font-medium">{resource.rating}</span>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 fill-current text-amber-400" />
+                        <span className="font-semibold">{resource.rating}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5" />
-                        <span className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        <span className="font-semibold">
                           {resource.downloads}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6">
                       {resource.tags.slice(0, 2).map((tag) => (
                         <Badge
                           key={tag}
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                          className="text-xs font-medium bg-white/60 text-gray-700 hover:bg-white/80 transition-all duration-300 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/30 hover:scale-105"
                         >
                           {tag}
                         </Badge>
@@ -858,7 +901,7 @@ export function ResourceHub() {
                       {resource.tags.length > 2 && (
                         <Badge
                           variant="secondary"
-                          className="text-xs font-normal bg-gray-100 text-gray-500"
+                          className="text-xs font-medium bg-white/40 text-gray-600 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/20"
                         >
                           +{resource.tags.length - 2}
                         </Badge>
@@ -867,10 +910,10 @@ export function ResourceHub() {
 
                     <Button
                       onClick={() => setSelectedResource(resource)}
-                      className="w-full font-medium bg-purple-600 hover:bg-purple-700 transition-all duration-200"
+                      className="w-full font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 rounded-xl py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-purple-500/25"
                       size="sm"
                     >
-                      Watch Video
+                      ▶️ Watch Video
                     </Button>
                   </CardContent>
                 </Card>
