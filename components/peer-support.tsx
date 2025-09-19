@@ -395,10 +395,6 @@ export function PeerSupport() {
     try {
       await navigator.clipboard.writeText(link);
       setCopiedForId(id);
-      setTimeout(
-        () => setCopiedForId((prev) => (prev === id ? null : prev)),
-        2000
-      );
     } catch (e) {
       // no-op
     }
