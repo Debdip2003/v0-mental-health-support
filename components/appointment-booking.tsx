@@ -689,12 +689,12 @@ export function AppointmentBooking({ user }: AppointmentBookingProps) {
                           </div>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <div>
                             <p className="text-xs font-medium text-gray-500 mb-2">
                               Specialties:
                             </p>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                               {counselor.specialties
                                 .slice(0, 3)
                                 .map((specialty) => (
@@ -714,6 +714,23 @@ export function AppointmentBooking({ user }: AppointmentBookingProps) {
                                   +{counselor.specialties.length - 3} more
                                 </Badge>
                               )}
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-2">
+                              Languages:
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {counselor.languages.map((language) => (
+                                <Badge
+                                  key={language}
+                                  variant="outline"
+                                  className="text-xs bg-green-50 text-green-600 border-green-300"
+                                >
+                                  {language}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
 
@@ -822,12 +839,12 @@ export function AppointmentBooking({ user }: AppointmentBookingProps) {
                           </div>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <div>
                             <p className="text-xs font-medium text-gray-500 mb-2">
                               Specialties:
                             </p>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                               {counselor.specialties
                                 .slice(0, 3)
                                 .map((specialty) => (
@@ -847,6 +864,23 @@ export function AppointmentBooking({ user }: AppointmentBookingProps) {
                                   +{counselor.specialties.length - 3} more
                                 </Badge>
                               )}
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-2">
+                              Languages:
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {counselor.languages.map((language) => (
+                                <Badge
+                                  key={language}
+                                  variant="outline"
+                                  className="text-xs bg-blue-50 text-blue-600 border-blue-300"
+                                >
+                                  {language}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
 
