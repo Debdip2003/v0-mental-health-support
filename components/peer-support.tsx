@@ -30,7 +30,10 @@ import {
   MoreVertical,
   Check,
   CheckCheck,
+  PlayCircle,
+  Lock,
 } from "lucide-react";
+// removed Unlock import as unlock feature is deprecated
 
 interface Post {
   id: string;
@@ -72,6 +75,19 @@ interface Volunteer {
   isOnline: boolean;
   specialty: string[];
   lastSeen: string;
+}
+
+interface Webinar {
+  id: string;
+  title: string;
+  trait: string; // e.g., Stress, OCD
+  description: string;
+  date: string;
+  time: string;
+  durationMins: number;
+  presenter: string;
+  priceInr: number; // 0 for free, 10 for paid
+  meetLink: string; // will be revealed after unlock
 }
 
 const mockPosts: Post[] = [
@@ -291,6 +307,103 @@ export function PeerSupport() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [communitiesData, setCommunitiesData] = useState(communities);
 
+  // Webinars state
+  const webinars: Webinar[] = [
+    {
+      id: "stress-101",
+      title: "Managing Exam Stress 101",
+      trait: "stress",
+      description:
+        "Practical breathing, grounding, and time-planning strategies for stressful weeks.",
+      date: "Sat, 28 Sep",
+      time: "6:00 PM",
+      durationMins: 60,
+      presenter: "Debdip Bhattacharya",
+      priceInr: 0,
+      meetLink: "https://meet.example.com/stress-101",
+    },
+    {
+      id: "mindfulness-free",
+      title: "Mindfulness for Busy Students",
+      trait: "mindfulness",
+      description:
+        "Learn 10-minute daily practices to improve focus and sleep.",
+      date: "Sun, 29 Sep",
+      time: "7:30 PM",
+      durationMins: 45,
+      presenter: "Ayush Saha Roy",
+      priceInr: 0,
+      meetLink: "https://meet.example.com/mindful",
+    },
+    {
+      id: "ocd-basics",
+      title: "OCD Basics: Understanding and Coping",
+      trait: "ocd",
+      description:
+        "Identify obsession-compulsion cycles and evidence-based coping steps.",
+      date: "Wed, 02 Oct",
+      time: "5:30 PM",
+      durationMins: 70,
+      presenter: "Dr. Debangshi Roy",
+      priceInr: 10,
+      meetLink: "https://meet.example.com/ocd-basics",
+    },
+    {
+      id: "anxiety-lab",
+      title: "Anxiety Skills Lab",
+      trait: "anxiety",
+      description:
+        "Guided practice: 4-7-8 breathing, exposure ladders, and thought records.",
+      date: "Fri, 04 Oct",
+      time: "6:30 PM",
+      durationMins: 60,
+      presenter: "Sahil Kumar Singh",
+      priceInr: 10,
+      meetLink: "https://meet.example.com/anx-lab",
+    },
+  ];
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [pendingWebinar, setPendingWebinar] = useState<Webinar | null>(null);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [activeWebinar, setActiveWebinar] = useState<Webinar | null>(null);
+  const [copiedForId, setCopiedForId] = useState<string | null>(null);
+  const [purchased, setPurchased] = useState<string[]>([]);
+  // removed unlock state/logic
+  const startAccess = (webinar: Webinar) => {
+    if (webinar.priceInr === 0 || purchased.includes(webinar.id)) {
+      setActiveWebinar(webinar);
+      setLinkDialogOpen(true);
+      return;
+    }
+    setPendingWebinar(webinar);
+    setPaymentOpen(true);
+  };
+  const completePayment = () => {
+    if (pendingWebinar) {
+      setPaymentOpen(false);
+      const unlockedWebinar = pendingWebinar;
+      setPurchased((prev) =>
+        Array.from(new Set([...prev, unlockedWebinar.id]))
+      );
+      setPendingWebinar(null);
+      setActiveWebinar(unlockedWebinar);
+      setLinkDialogOpen(true);
+    }
+  };
+
+  const copyLink = async (id: string, link: string) => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopiedForId(id);
+      setTimeout(
+        () => setCopiedForId((prev) => (prev === id ? null : prev)),
+        2000
+      );
+    } catch (e) {
+      // no-op
+    }
+  };
+
   const availableTags = [
     "anxiety",
     "depression",
@@ -495,11 +608,12 @@ export function PeerSupport() {
       </Card>
 
       <Tabs defaultValue="feed" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="feed">Community Feed</TabsTrigger>
           <TabsTrigger value="create">Share Your Story</TabsTrigger>
           <TabsTrigger value="communities">Communities</TabsTrigger>
           <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
+          <TabsTrigger value="webinars">Webinars</TabsTrigger>
         </TabsList>
 
         <TabsContent value="feed" className="space-y-4">
@@ -788,6 +902,77 @@ export function PeerSupport() {
             ))}
           </div>
         </TabsContent>
+
+        {/* Webinars */}
+        <TabsContent value="webinars" className="space-y-4">
+          <Card className="border-amber-200 bg-amber-50/40">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <PlayCircle className="h-5 w-5 text-amber-700" />
+                <CardTitle className="text-lg font-serif text-amber-900">
+                  Live Webinars & Workshops
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Webinars tagged with basic traits like stress are free. Advanced
+                topics like OCD are available for a minimal fee of ₹10. Access
+                opens the Meet link in a new tab.
+              </p>
+              {/* unlock reset removed */}
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {webinars.map((w) => (
+              <Card key={w.id} className="hover:shadow-md transition-shadow">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold">{w.title}</h3>
+                      <div className="text-xs text-muted-foreground">
+                        {w.date} • {w.time} • {w.durationMins} mins
+                      </div>
+                    </div>
+                    <Badge variant={w.priceInr === 0 ? "secondary" : "outline"}>
+                      {w.priceInr === 0 ? "Free" : `₹${w.priceInr}`}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {w.description}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs">
+                    <Badge variant="outline">Trait: {w.trait}</Badge>
+                    <Badge variant="outline">Host: {w.presenter}</Badge>
+                    {w.priceInr > 0 ? (
+                      <span className="inline-flex items-center gap-1 text-slate-600">
+                        <Lock className="h-3 w-3" /> Locked
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button className="flex-1" onClick={() => startAccess(w)}>
+                      {w.priceInr === 0 || purchased.includes(w.id)
+                        ? "Join Webinar"
+                        : `Unlock for ₹${w.priceInr}`}
+                    </Button>
+                    {(w.priceInr === 0 || purchased.includes(w.id)) && (
+                      <Button
+                        variant="outline"
+                        onClick={() => copyLink(w.id, w.meetLink)}
+                      >
+                        {copiedForId === w.id ? "Copied!" : "Copy Link"}
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
       </Tabs>
 
       {/* Community Stats */}
@@ -993,6 +1178,96 @@ export function PeerSupport() {
 
             <p className="text-xs text-slate-500 mt-2 text-center">
               Private messages are encrypted and monitored for safety
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Webinar Link Dialog */}
+      <Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Join Webinar</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Use the buttons below to open or copy the meeting link.
+            </p>
+            <div className="p-3 border rounded-md bg-muted/30 text-sm break-all">
+              {activeWebinar?.meetLink}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                className="flex-1"
+                onClick={() => {
+                  if (activeWebinar) {
+                    window.open(
+                      activeWebinar.meetLink,
+                      "_blank",
+                      "noopener,noreferrer"
+                    );
+                  }
+                }}
+              >
+                Open Link
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() =>
+                  activeWebinar &&
+                  copyLink(activeWebinar.id, activeWebinar.meetLink)
+                }
+              >
+                {copiedForId === activeWebinar?.id ? "Copied!" : "Copy Link"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Dialog */}
+      <Dialog open={paymentOpen} onOpenChange={setPaymentOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Checkout</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Pay{" "}
+              <span className="font-semibold">
+                ₹{pendingWebinar?.priceInr ?? 10}
+              </span>{" "}
+              to unlock access. This is a demo checkout and will not charge your
+              card.
+            </p>
+            <div className="p-3 border rounded-md space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Webinar</span>
+                <span className="font-medium">{pendingWebinar?.title}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Amount</span>
+                <span className="font-medium">
+                  ₹{(pendingWebinar?.priceInr ?? 10).toFixed(2)}
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button className="flex-1" onClick={completePayment}>
+                Pay ₹10
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setPaymentOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              After payment, the Meet link will open in a new tab and the
+              webinar will remain unlocked for this browser.
             </p>
           </div>
         </DialogContent>
