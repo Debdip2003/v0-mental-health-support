@@ -28,7 +28,7 @@ export function AssessmentTests() {
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [questions, setQuestions] = useState<string[]>([]);
-  const [options, setOptions] = useState<{ value: number; label: string }[]>(
+  const [options, setOptions] = useState<{ value: number; label: string }[][]>(
     []
   );
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
@@ -53,6 +53,18 @@ export function AssessmentTests() {
           options: options,
           title: "General Health Assessment (GHQ)",
         };
+      case "alco":
+        return {
+          questions: questions,
+          options: options,
+          title: "Substance Use Screening (ASSIST)",
+        };
+      case "ocd":
+        return {
+          questions: questions,
+          options: options,
+          title: "OCD Assessment (Y-BOCS)",
+        };
       default:
         return { questions: [], options: [], title: "" };
     }
@@ -68,6 +80,10 @@ export function AssessmentTests() {
         apiUrl = "http://127.0.0.1:5000/gad7";
       } else if (testType === "ghq") {
         apiUrl = "http://127.0.0.1:5000/ghq";
+      } else if (testType === "alco") {
+        apiUrl = "http://127.0.0.1:8001/alco";
+      } else if (testType === "ocd") {
+        apiUrl = "http://127.0.0.1:8003/ocd";
       }
 
       console.log("Fetching from:", apiUrl);
@@ -93,42 +109,114 @@ export function AssessmentTests() {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
 
-      // Extract questions from labels
-      const questionLabels = doc.querySelectorAll("label");
-      const extractedQuestions: string[] = [];
-      questionLabels.forEach((label) => {
-        const text = label.textContent?.trim();
-        if (
-          text &&
-          !text.includes("Not at all") &&
-          !text.includes("Several days") &&
-          !text.includes("More than half") &&
-          !text.includes("Nearly every day") &&
-          !text.includes("Better than usual") &&
-          !text.includes("Same as usual") &&
-          !text.includes("Less than usual") &&
-          !text.includes("Much less than usual")
-        ) {
-          extractedQuestions.push(text);
-        }
-      });
+      // Specialized HTML parsing per assessment
+      let extractedQuestions: string[] = [];
+      let perQuestionOptions: { value: number; label: string }[][] = [];
 
-      // Extract options from select elements
-      const selectElement = doc.querySelector("select");
-      const extractedOptions: { value: number; label: string }[] = [];
-      if (selectElement) {
-        const optionElements = selectElement.querySelectorAll("option");
-        optionElements.forEach((option) => {
-          const value = parseInt(option.getAttribute("value") || "0");
-          const label = option.textContent?.trim() || "";
-          if (label) {
-            extractedOptions.push({ value, label });
+      if (testType === "ocd") {
+        // OCD template: div.question blocks with label + multiple radio inputs
+        const questionDivs = Array.from(
+          doc.querySelectorAll<HTMLElement>(".question")
+        );
+        questionDivs.forEach((qDiv) => {
+          const labelEl = qDiv.querySelector<HTMLLabelElement>("label");
+          const qText = labelEl?.textContent?.trim();
+          if (qText) extractedQuestions.push(qText);
+
+          const radios = Array.from(
+            qDiv.querySelectorAll<HTMLInputElement>('input[type="radio"]')
+          );
+          const opts: { value: number; label: string }[] = [];
+          radios.forEach((input) => {
+            const valueAttr = input.getAttribute("value") || "0";
+            const value = parseInt(valueAttr);
+            const labelText = (input.nextSibling?.textContent || "").trim();
+            if (labelText) opts.push({ value, label: labelText });
+          });
+          if (opts.length > 0) perQuestionOptions.push(opts);
+        });
+      } else if (testType === "alco") {
+        // Alcohol ASSIST template: multiple .substance sections; pick Alcohol
+        const substances = Array.from(
+          doc.querySelectorAll<HTMLElement>(".substance")
+        );
+        const alcoholSection = substances.find((sec) => {
+          const h2 = sec.querySelector<HTMLHeadingElement>("h2");
+          return h2 && h2.textContent?.trim() === "Alcohol";
+        });
+        if (alcoholSection) {
+          const pTags = Array.from(
+            alcoholSection.querySelectorAll<HTMLParagraphElement>("p")
+          );
+          const scoreMap: Record<string, number> = {
+            Never: 0,
+            "Once or twice": 2,
+            Monthly: 3,
+            Weekly: 4,
+            "Daily or almost daily": 6,
+            "No, never": 0,
+            "Yes, but not in the past 3 months": 3,
+            "Yes, in the past 3 months": 6,
+          };
+          for (let i = 0; i < pTags.length; i++) {
+            const qText = pTags[i].textContent?.trim();
+            if (qText) extractedQuestions.push(qText);
+            const qNumber = 2 + i; // Questions Q2..Q8
+            const inputs = Array.from(
+              alcoholSection.querySelectorAll<HTMLInputElement>(
+                `input[name="Alcohol_Q${qNumber}"]`
+              )
+            );
+            const normalize = (s: string) => s.replace(/\s+/g, " ").trim();
+            const seen = new Set<string>();
+            const opts: { value: number; label: string }[] = [];
+            inputs.forEach((input) => {
+              const labelText = normalize(input.nextSibling?.textContent || "");
+              if (labelText && !seen.has(labelText)) {
+                seen.add(labelText);
+                const value = scoreMap[labelText] ?? 0;
+                opts.push({ value, label: labelText });
+              }
+            });
+            if (opts.length > 0) perQuestionOptions.push(opts);
+          }
+        }
+      } else {
+        // Default parser: questions in labels and shared options in a select
+        const questionLabels = Array.from(doc.querySelectorAll("label"));
+        questionLabels.forEach((label) => {
+          const text = label.textContent?.trim();
+          if (
+            text &&
+            !text.includes("Not at all") &&
+            !text.includes("Several days") &&
+            !text.includes("More than half") &&
+            !text.includes("Nearly every day") &&
+            !text.includes("Better than usual") &&
+            !text.includes("Same as usual") &&
+            !text.includes("Less than usual") &&
+            !text.includes("Much less than usual")
+          ) {
+            extractedQuestions.push(text);
           }
         });
+        const selectElement = doc.querySelector("select");
+        const extractedOptions: { value: number; label: string }[] = [];
+        if (selectElement) {
+          const optionElements = Array.from(
+            selectElement.querySelectorAll("option")
+          );
+          optionElements.forEach((option) => {
+            const value = parseInt(option.getAttribute("value") || "0");
+            const label = option.textContent?.trim() || "";
+            if (label) extractedOptions.push({ value, label });
+          });
+        }
+        perQuestionOptions = extractedQuestions.map(() => extractedOptions);
       }
 
       setQuestions(extractedQuestions);
-      setOptions(extractedOptions);
+      setOptions(perQuestionOptions);
     } catch (error) {
       console.error("Error fetching questions:", error);
       // Show more specific error message
@@ -167,7 +255,7 @@ export function AssessmentTests() {
         const score = calculateScore();
         setAssessmentResult({
           score,
-          advice: getScoreInterpretation(score).description,
+          advice: getScoreInterpretation(score)?.description || "",
         });
         setTestCompleted(true);
         setShowResults(true);
@@ -192,6 +280,10 @@ export function AssessmentTests() {
         apiUrl = "http://127.0.0.1:5000/gad7";
       } else if (selectedTest === "ghq") {
         apiUrl = "http://127.0.0.1:5000/ghq";
+      } else if (selectedTest === "alco") {
+        apiUrl = "http://127.0.0.1:8001/alco";
+      } else if (selectedTest === "ocd") {
+        apiUrl = "http://127.0.0.1:8003/ocd";
       }
 
       const response = await fetch(apiUrl, {
@@ -213,7 +305,7 @@ export function AssessmentTests() {
       // Fallback to local calculation if backend is not available
       return {
         score,
-        advice: getScoreInterpretation(score).description,
+        advice: getScoreInterpretation(score)?.description || "",
       };
     }
   };
@@ -273,7 +365,7 @@ export function AssessmentTests() {
         color: "text-red-600",
         description: "Severe anxiety symptoms",
       };
-    } else {
+    } else if (selectedTest === "ghq") {
       if (score <= 15)
         return {
           level: "Good",
@@ -290,6 +382,42 @@ export function AssessmentTests() {
         level: "Significant",
         color: "text-red-600",
         description: "Significant mental health concerns",
+      };
+    } else if (selectedTest === "alco") {
+      if (score <= 15)
+        return {
+          level: "Low",
+          color: "text-green-600",
+          description: "Low risk of substance use",
+        };
+      if (score <= 20)
+        return {
+          level: "Moderate",
+          color: "text-yellow-600",
+          description: "Moderate risk of substance use",
+        };
+      return {
+        level: "High",
+        color: "text-red-600",
+        description: "High risk of substance use",
+      };
+    } else if (selectedTest === "ocd") {
+      if (score <= 15)
+        return {
+          level: "Subclinical",
+          color: "text-green-600",
+          description: "Subclinical OCD",
+        };
+      if (score <= 20)
+        return {
+          level: "Mild OCD",
+          color: "text-yellow-600",
+          description: "Mild OCD",
+        };
+      return {
+        level: "Severe OCD",
+        color: "text-red-600",
+        description: "Severe OCD",
       };
     }
   };
@@ -308,7 +436,10 @@ export function AssessmentTests() {
   };
 
   const handleTestSelection = async (testType: string) => {
+    // Reset state to avoid value carryover between tests
     setSelectedTest(testType);
+    setCurrentQuestion(0);
+    setResponses([]);
     await fetchQuestionsAndOptions(testType);
   };
 
@@ -317,6 +448,22 @@ export function AssessmentTests() {
     testData.questions.length > 0
       ? ((currentQuestion + 1) / testData.questions.length) * 100
       : 0;
+
+  const getIntroLine = () => {
+    if (selectedTest === "phq9" || selectedTest === "gad7") {
+      return "Over the last 2 weeks, how often have you been bothered by:";
+    }
+    if (selectedTest === "ghq") {
+      return "Please consider your recent general mental health and answer:";
+    }
+    if (selectedTest === "alco") {
+      return "Please answer the following substance use questions:";
+    }
+    if (selectedTest === "ocd") {
+      return "Please answer the following OCD related questions:";
+    }
+    return "Please answer the following:";
+  };
 
   if (!selectedTest) {
     return (
@@ -390,6 +537,42 @@ export function AssessmentTests() {
           </Card>
         </div>
 
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
+            <CardHeader className="text-center">
+              <CardDescription>Substance Use Screening</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-slate-600 mb-4">
+                Opens the Alcohol/Drugs screening in a new tab.
+              </p>
+              <Button
+                className="w-full bg-purple-600 hover:bg-purple-700"
+                onClick={() => handleTestSelection("alco")}
+              >
+                Start Assessment
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-rose-500">
+            <CardHeader className="text-center">
+              <CardDescription>OCD Assessment </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-slate-600 mb-4">
+                Opens the OCD assessment in a new tab.
+              </p>
+              <Button
+                className="w-full bg-rose-600 hover:bg-rose-700"
+                onClick={() => handleTestSelection("ocd")}
+              >
+                Start Assessment
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
         <Card className="bg-amber-50 border-amber-200">
           <CardContent className="p-6">
             <div className="flex items-start space-x-3">
@@ -416,7 +599,8 @@ export function AssessmentTests() {
   if (showResults) {
     const score = assessmentResult?.score || calculateScore();
     const interpretation = getScoreInterpretation(score);
-    const advice = assessmentResult?.advice || interpretation.description;
+    const advice =
+      assessmentResult?.advice || interpretation?.description || "";
 
     return (
       <div className="max-w-2xl mx-auto p-6 space-y-6">
@@ -433,11 +617,11 @@ export function AssessmentTests() {
                 {score}
               </div>
               <div
-                className={`text-xl font-semibold ${interpretation.color} mb-2`}
+                className={`text-xl font-semibold ${interpretation?.color} mb-2`}
               >
-                {interpretation.level}
+                {interpretation?.level}
               </div>
-              <p className="text-slate-600">{interpretation.description}</p>
+              <p className="text-slate-600">{interpretation?.description}</p>
             </div>
 
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -542,7 +726,7 @@ export function AssessmentTests() {
         <CardContent className="space-y-6">
           <div>
             <h3 className="text-lg font-medium text-slate-800 mb-4">
-              Over the last 2 weeks, how often have you been bothered by:
+              {getIntroLine()}
             </h3>
             <p className="text-slate-700 font-medium">
               {testData.questions[currentQuestion]}
@@ -553,20 +737,20 @@ export function AssessmentTests() {
             value={responses[currentQuestion]?.toString()}
             onValueChange={(value) => handleResponse(Number.parseInt(value))}
           >
-            {testData.options.map((option) => (
-              <div key={option.value} className="flex items-center space-x-2">
-                <RadioGroupItem
-                  value={option.value.toString()}
-                  id={option.value.toString()}
-                />
-                <Label
-                  htmlFor={option.value.toString()}
-                  className="cursor-pointer"
-                >
-                  {option.label}
-                </Label>
-              </div>
-            ))}
+            {testData.options[currentQuestion]?.map((option) => {
+              const optionId = `q${currentQuestion}-opt${option.value}`;
+              return (
+                <div key={optionId} className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value={option.value.toString()}
+                    id={optionId}
+                  />
+                  <Label htmlFor={optionId} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              );
+            })}
           </RadioGroup>
 
           <Button
